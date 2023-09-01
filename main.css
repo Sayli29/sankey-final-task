@@ -1,0 +1,30 @@
+body {
+    margin: 0px;
+}
+
+.task-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.task-list li {
+    display: block;
+    width: 100%;
+    border: 1px solid #000;
+    padding: 20px;
+}
+
+.sub-task-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    margin-left: 50px;
+}
+
+.sub-task-list li {
+    display: block;
+    width: 100%;
+    border: 1px solid #000;
+    padding: 20px;
+}
