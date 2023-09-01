@@ -59,7 +59,7 @@ function renderTasks() {
 function generateTaskHtml(idx) {
   const task = tasks[idx]
   if (task._isEditing) {
-    return `<div>
+    return `<div class="taskForm">
     
     <label for="task.${idx}.taskId">ID</label>
     <input id="task.${idx}.taskId" type="number" value="${task.taskId}"/>
@@ -86,7 +86,8 @@ function generateTaskHtml(idx) {
         <option value="Cancelled">Cancelled</option>
       </select>
 
-    <button onClick="saveTask(${idx})">Save Task</button>
+    <button onClick="saveTask(${idx})" class="taskBtn taskSaveBtn">Save Task</button>
+    <button onClick="deleteTask(${idx})" class="taskBtn taskDeleteBtn">Delete</button>
     <ul class="sub-task-list">
       ${task.subTasks.map((_, subTaskIdx) => generateSubTaskHtml(idx, subTaskIdx))}
     </ul>
@@ -102,9 +103,9 @@ function generateTaskHtml(idx) {
     <ul class="sub-task-list">
       ${task.subTasks.map((_, subTaskIdx) => generateSubTaskHtml(idx, subTaskIdx) )}
     </ul>
-    <button onClick="addSubTask(${idx})">Add Sub Task</button>
-    <button onClick="editTask(${idx})">Edit</button>
-    <button onClick="deleteTask(${idx})">Delete</button>
+    <button onClick="addSubTask(${idx})" class="taskBtn taskSaveBtn">Add Sub Task</button>
+    <button onClick="editTask(${idx})" class="taskBtn taskEditBtn">Edit</button>
+    <button onClick="deleteTask(${idx})" class="taskBtn taskDeleteBtn">Delete</button>
     </div>`
   }
 }
@@ -130,15 +131,16 @@ function generateSubTaskHtml(taskIdx, subTaskIdx) {
 
     
 
-      <label for="task.${taskIdx}.subStatus">Status:</label>
-      <select id="task.${taskIdx}.subStatus">
+      <label for="task.${taskIdx}.subtask.${subTaskIdx}.subStatus">Status:</label>
+      <select id="task.${taskIdx}.subtask.${subTaskIdx}.subStatus">
         <option value="InProgress">InProgress</option>
         <option value="Completed">Completed</option>
         <option value="DuePassed">Due Passed</option>
         <option value="Cancelled">Cancelled</option>
       </select>
 
-      <button onClick="saveSubTask(${taskIdx}, ${subTaskIdx})">Save Sub Task</button>
+      <button onClick="saveSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskSaveBtn">Save Sub Task</button>
+              <button onClick="deleteSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskDeleteBtn">Delete Sub Task</button>
       </div>
     </li>
     `
@@ -151,8 +153,8 @@ function generateSubTaskHtml(taskIdx, subTaskIdx) {
           <h4>Sub Task Start Date: ${subTask.subStartDate}</h4>
           <h4>Sub Task End Date: ${subTask.subEndDate}</h4>
           <h4>Sub Task Status: ${subTask.subStatus}</h4>
-          <button onClick="editSubTask(${taskIdx}, ${subTaskIdx})">Edit Sub Task</button>
-          <button onClick="deleteSubTask(${taskIdx}, ${subTaskIdx})">Delete Sub Task</button>
+          <button onClick="editSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskEditBtn">Edit Sub Task</button>
+          <button onClick="deleteSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskDeleteBtn">Delete Sub Task</button>
         </div>
       </li>
     `
@@ -167,7 +169,7 @@ function editTask(idx) {
 
 // func to save task
 function saveTask(idx) {
-  tasks[idx].id = document.getElementById(`task.${idx}.taskId`).value
+  tasks[idx].taskId = document.getElementById(`task.${idx}.taskId`).value
   tasks[idx].taskName = document.getElementById(`task.${idx}.taskName`).value
   tasks[idx].taskStartDate = document.getElementById(`task.${idx}.taskStartDate`).value
   tasks[idx].taskEndDate = document.getElementById(`task.${idx}.taskEndDate`).value
@@ -202,8 +204,11 @@ function editSubTask(taskIdx, subTaskIdx) {
 // func to save sub tasdk
 function saveSubTask(taskIdx, subTaskIdx) {
   tasks[taskIdx].subTasks[subTaskIdx].subTaskName = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subTaskName`).value
+  tasks[taskIdx].subTasks[subTaskIdx].subStartDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStartDate`).value
+  tasks[taskIdx].subTasks[subTaskIdx].subEndDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subEndDate`).value
+  tasks[taskIdx].subTasks[subTaskIdx].subStatus = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStatus`).value
   tasks[taskIdx].subTasks[subTaskIdx]._isEditing = false
-  console.log(tasks)
+
   renderTasks()
 }
 

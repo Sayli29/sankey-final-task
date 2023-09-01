@@ -8,13 +8,25 @@
   <link rel="stylesheet" href="/main.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Roboto:wght@700&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
-  <h1>Task App</h1>
-  <ul class="task-list" id="taskList"></ul>
-  <button id="btnAdd">Add Task</button>
+  <div class="container">
+    <h1>Task App</h1>
+    <div class="searchContainer">
+      <input type="text" id="search">
+      
+      <button id="searchButton">Search</button>
+    </div>
+    <div class="buttonContainer">
+      <button id="btnAdd">Add Task</button>
+    </div>
+    <ul class="task-list" id="taskList"></ul>
+  </div>
+    
+  
   <script src="/main.js"></script>
   </body>
   
