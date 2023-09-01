@@ -1,5 +1,16 @@
 body {
     margin: 0px;
+    font-family: sans-serif;
+    background: #8640B7;
+    background: linear-gradient(180deg, #8640B7, #2135E1) no-repeat;
+}
+
+h1 {
+    display: flex;
+    justify-content: center;
+    font-family: 'Roboto', sans-serif;
+    color: rgb(253, 252, 255);
+    padding: 1.5rem;
 }
 
 .task-list {
