@@ -31,6 +31,9 @@ function addNewTask() {
   tasks.push({
     taskId: '',
     taskName: '',
+    taskStartDate: '',
+    taskEndDate: '',
+    taskStatus: '',
     subTasks: [],
     _isEditing: true,
   })
@@ -60,37 +63,41 @@ function generateTaskHtml(idx) {
   const task = tasks[idx]
   if (task._isEditing) {
     return `<div class="taskForm">
-    
+    <form>
     <label for="task.${idx}.taskId">ID</label>
-    <input id="task.${idx}.taskId" type="number" value="${task.taskId}"/>
+    <input id="task.${idx}.taskId" type="number" value="${task.taskId}" onchange="onChangeTaskId(${idx})" required/>
+    <p style="color:red;" id="task.${idx}.taskId.error"></p>
     </br>
 
     <label for="task.${idx}.taskName">Name</label>
-    <input id="task.${idx}.taskName" type="text" value="${task.taskName}"/>
+    <input id="task.${idx}.taskName" type="text" value="${task.taskName}" onchange="onChangeTaskName(${idx})" required/>
+    <p style="color:red;" id="task.${idx}.taskName.error"></p>
     </br>
 
     <label for="task.${idx}.taskStartDate">Start</label>
-    <input id="task.${idx}.taskStartDate"type="datetime-local" value="${task.taskStartDate}" onchange="onChangeTaskDate(${idx})"/>
+    <input id="task.${idx}.taskStartDate"type="datetime-local" value="${task.taskStartDate}" onchange="onChangeTaskDate(${idx})" required/>
+    <p style="color:red;" id="task.${idx}.taskStartDate.error"></p>
     </br>
 
     <label for="task.${idx}.taskEndDate">End</label>
-    <input id="task.${idx}.taskEndDate" type="datetime-local" value="${task.taskEndDate}" onchange="onChangeTaskDate(${idx})"/>
+    <input id="task.${idx}.taskEndDate" type="datetime-local" value="${task.taskEndDate}" onchange="onChangeTaskDate(${idx})" required/>
     <p style="color:red;" id="task.${idx}.taskEndDate.error"></p>
     </br>
 
     <label for="task.${idx}.taskStatus">Status:</label>
-      <select id="task.${idx}.taskStatus">
+      <select id="task.${idx}.taskStatus" required>
         <option value="InProgress">InProgress</option>
         <option value="Completed">Completed</option>
         <option value="DuePassed">Due Passed</option>
         <option value="Cancelled">Cancelled</option>
       </select>
 
-    <button onClick="saveTask(${idx})" class="taskBtn taskSaveBtn">Save Task</button>
+    <button onClick="saveTask(${idx})" class="taskBtn taskSaveBtn" type="submit">Save Task</button>
     <button onClick="deleteTask(${idx})" class="taskBtn taskDeleteBtn">Delete</button>
     <ul class="sub-task-list">
       ${task.subTasks.map((_, subTaskIdx) => generateSubTaskHtml(idx, subTaskIdx))}
     </ul>
+    </form>
     </div>`
   } else {
     return `<div>
@@ -192,7 +199,6 @@ function addSubTask(idx) {
 function deleteSubTask(taskIdx, subTaskIdx) {
   tasks[taskIdx].subTasks.splice(subTaskIdx, 1);
   renderTasks()
- 
 }
 
 // func to set sub task editing
@@ -211,6 +217,20 @@ function saveSubTask(taskIdx, subTaskIdx) {
 
   renderTasks()
 }
+
+
+//function to validate id
+function onChangeTaskId(taskIdx) {
+  const taskIdValue = document.getElementById(`task.${taskIdx}.taskId`).value
+  const errorElement = document.getElementById(`task.${taskIdx}.taskId.error`)
+  if (!errorElement) return
+  if (tasks.find(t => t.taskId === taskIdValue)){
+    errorElement.innerHTML = "Task with id " + taskIdValue + " already exists."
+  } else {
+    errorElement.innerHTML = ''
+  }
+}
+
 
 // func to handle date change
 function onChangeTaskDate(taskIdx) {
@@ -256,6 +276,10 @@ function onChangeSubTaskDate(taskIdx, subTaskIdx) {
   }
   errorElement.innerText = ''
 }
+
+
+
+
 
 // intital render
 document.addEventListener('DOMContentLoaded', () => {
