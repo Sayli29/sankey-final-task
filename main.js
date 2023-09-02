@@ -3,8 +3,15 @@ btnAddEl.addEventListener('click', () => {
   addNewTask()
 })
 
+const searchButtonEl = document.getElementById('searchButton')
+
+searchButtonEl.addEventListener('click', () => {
+  search = document.getElementById('searchInput').value.toLowerCase();
+  renderTasks();
+})
 const taskListEl = document.getElementById('taskList');
 
+let search = ''
 const tasks = [
   // {
   //   taskId: '1',
@@ -28,6 +35,7 @@ const tasks = [
 
 // func to add new task
 function addNewTask() {
+  search = ''
   tasks.push({
     taskId: '',
     taskName: '',
@@ -52,10 +60,56 @@ function renderTasks() {
   // empty everything
   taskListEl.innerHTML = ''
   for (let i = 0; i < tasks.length; i++) {
+    if (isTaskInSearch(tasks[i]) === false) {
+      continue;
+    }
     const taskEl = document.createElement('li');
     taskEl.innerHTML = generateTaskHtml(i)
     taskListEl.appendChild(taskEl)
   }
+}
+
+// func to check if task is in search
+function isTaskInSearch(task) {
+  if(search.length < 1) {
+    return true;
+  }
+  if (String(task.taskId).toLowerCase().includes(search)) {
+    return true
+  }
+  if (String(task.taskName).toLowerCase().includes(search)) {
+    return true
+  }
+  if (task.taskStartDate && String(task.taskStartDate).toLowerCase().includes(search)) {
+    return true
+  }
+  if (task.taskStartDate && String(task.taskEndDate).toLowerCase().includes(search)) {
+    return true
+  }
+  if (task.taskStatus.toLowerCase().includes(search)) {
+    return true
+  }
+  const filteredSubTasks = task.subTasks.filter((subTask) => {
+    if(subTask.subId.toLowerCase().includes(search)) {
+      return true
+    }
+    if(subTask.subTaskName.toLowerCase().includes(search)) {
+      return true
+    }
+    if (subTask.subStartDate && String(task.subStartDate).toLowerCase().includes(search)) {
+      return true
+    }
+    if (subTask.subEndDate && String(task.subEndDate).toLowerCase().includes(search)) {
+      return true
+    }
+    if (subTask.subStatus.toLowerCase().includes(search)) {
+      return true
+    }
+  })
+  if (filteredSubTasks.length > 0) {
+    return true
+  }
+  return false
 }
 
 // func to generate task (single task) html
@@ -179,6 +233,7 @@ function getStatusStyle(status) {
   } else if (status === 'Cancelled') {
     return "color: gray;"
   }
+  return "color: red;"
 }
 
 // func to set it editing
