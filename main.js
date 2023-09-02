@@ -105,7 +105,7 @@ function generateTaskHtml(idx) {
     <h3>TaskName: ${task.taskName}</h3>
     <h3>Start Date: ${task.taskStartDate}</h3>
     <h3>End Date: ${task.taskEndDate}</h3>
-    <h3>Task Status: ${task.taskStatus}</h3>
+    <h3>Task Status: <span style="${getStatusStyle(task.taskStatus)}">${task.taskStatus}</span></h3>
 
     <ul class="sub-task-list">
       ${task.subTasks.map((_, subTaskIdx) => generateSubTaskHtml(idx, subTaskIdx) )}
@@ -159,12 +159,25 @@ function generateSubTaskHtml(taskIdx, subTaskIdx) {
           <h4>Sub TaskName: ${subTask.subTaskName}</h4>
           <h4>Sub Task Start Date: ${subTask.subStartDate}</h4>
           <h4>Sub Task End Date: ${subTask.subEndDate}</h4>
-          <h4>Sub Task Status: ${subTask.subStatus}</h4>
+          <h4>Sub Task Status: <span style="${getStatusStyle(subTask.subStatus)}">${subTask.subStatus}<span/></h4>
           <button onClick="editSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskEditBtn">Edit Sub Task</button>
           <button onClick="deleteSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskDeleteBtn">Delete Sub Task</button>
         </div>
       </li>
     `
+  }
+}
+
+// func to get status class name
+function getStatusStyle(status) {
+  if (status === 'InProgress') {
+    return "color: yellow;"
+  } else if (status === 'Completed') {
+    return "color: green;"
+  } else if (status === 'Due Passed') {
+    return "color: red;"
+  } else if (status === 'Cancelled') {
+    return "color: gray;"
   }
 }
 
