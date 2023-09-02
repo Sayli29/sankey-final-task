@@ -33,6 +33,9 @@ const tasks = [
   // }
 ]
 
+const deletedTasks = [];
+const editTasks = [];
+
 // func to add new task
 function addNewTask() {
   search = ''
@@ -50,6 +53,8 @@ function addNewTask() {
 
 //function to delete parent task
 function deleteTask(taskIdx){
+  deletedTasks.push(tasks[taskIdx])
+  // console.log('deleted tasks ',deletedTasks);
   tasks.splice(taskIdx,1);
   renderTasks();
 
@@ -115,6 +120,23 @@ function isTaskInSearch(task) {
 // func to generate task (single task) html
 function generateTaskHtml(idx) {
   const task = tasks[idx]
+  // const currentDate = new Date();
+
+  // Default option
+  // let statusOptions = '<option value="Completed">Completed</option>'; 
+
+  // if (currentDate > new Date(task.taskEndDate)) {
+  //   // If the current date is after the task's end date
+  //   statusOptions += '<option value="Due Passed">Due Passed</option>';
+  // }
+
+  // if (currentDate >= new Date(task.taskStartDate) && currentDate <= new Date(task.taskEndDate)) {
+  //   // If the current date is within the task's start and end dates
+  //   statusOptions += '<option value="In Progress">In Progress</option>';
+  // }
+
+  // statusOptions += '<option value="Canceled">Canceled</option>';
+
   if (task._isEditing) {
     return `<div class="taskForm">
     <form>
@@ -242,16 +264,48 @@ function editTask(idx) {
   renderTasks()
 }
 
+
 // func to save task
 function saveTask(idx) {
-  tasks[idx].taskId = document.getElementById(`task.${idx}.taskId`).value
-  tasks[idx].taskName = document.getElementById(`task.${idx}.taskName`).value
-  tasks[idx].taskStartDate = document.getElementById(`task.${idx}.taskStartDate`).value
-  tasks[idx].taskEndDate = document.getElementById(`task.${idx}.taskEndDate`).value
-  tasks[idx].taskStatus = document.getElementById(`task.${idx}.taskStatus`).value
-  tasks[idx]._isEditing = false
-  renderTasks()
+  //new code by me of save
+  const taskIdInput = document.getElementById(`task.${idx}.taskId`);
+  const taskNameInput = document.getElementById(`task.${idx}.taskName`);
+  const taskStartDateInput = document.getElementById(`task.${idx}.taskStartDate`);
+  const taskEndDateInput = document.getElementById(`task.${idx}.taskEndDate`);
+
+  if (
+    !taskIdInput.value ||
+    !taskNameInput.value ||
+    !taskStartDateInput.value ||
+    !taskEndDateInput.value
+  ) {
+    alert("Please fill in all inputs required for Tasks fields.");
+    return;
+  } else {
+    tasks[idx].taskId = taskIdInput.value;
+    tasks[idx].taskName = taskNameInput.value;
+    tasks[idx].taskStartDate = taskStartDateInput.value;
+    tasks[idx].taskEndDate = taskEndDateInput.value;
+    tasks[idx].taskStatus = document.getElementById(`task.${idx}.taskStatus`).value;
+    tasks[idx]._isEditing = false;
+    renderTasks();
+  }
+  //new code ends here
+
+
+  //previous code starts here
+
+  // tasks[idx].taskId = document.getElementById(`task.${idx}.taskId`).value
+  // tasks[idx].taskName = document.getElementById(`task.${idx}.taskName`).value
+  // tasks[idx].taskStartDate = document.getElementById(`task.${idx}.taskStartDate`).value
+  // tasks[idx].taskEndDate = document.getElementById(`task.${idx}.taskEndDate`).value
+  // tasks[idx].taskStatus = document.getElementById(`task.${idx}.taskStatus`).value
+  // tasks[idx]._isEditing = false
+  // renderTasks()
+
+  //previous code ends here
 }
+
 
 // func to add sub task
 function addSubTask(idx) {
@@ -275,15 +329,41 @@ function editSubTask(taskIdx, subTaskIdx) {
   renderTasks()
 }
 
+
 // func to save sub tasdk
 function saveSubTask(taskIdx, subTaskIdx) {
-  tasks[taskIdx].subTasks[subTaskIdx].subTaskName = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subTaskName`).value
-  tasks[taskIdx].subTasks[subTaskIdx].subStartDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStartDate`).value
-  tasks[taskIdx].subTasks[subTaskIdx].subEndDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subEndDate`).value
-  tasks[taskIdx].subTasks[subTaskIdx].subStatus = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStatus`).value
-  tasks[taskIdx].subTasks[subTaskIdx]._isEditing = false
 
-  renderTasks()
+  const subTaskNameInput = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subTaskName`);
+  const subTaskStartDateInput = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStartDate`);
+  const subTaskEndDateInput = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subEndDate`);
+
+  if (
+    !subTaskNameInput.value ||
+    !subTaskStartDateInput.value ||
+    !subTaskEndDateInput.value
+  ) {
+    alert("Please fill in all input required for sub tasks fields.");
+    return;
+  } else {
+    tasks[taskIdx].subTasks[subTaskIdx].subTaskName = subTaskNameInput.value;
+    tasks[taskIdx].subTasks[subTaskIdx].subStartDate = subTaskStartDateInput.value;
+    tasks[taskIdx].subTasks[subTaskIdx].subEndDate = subTaskEndDateInput.value;
+    tasks[taskIdx].subTasks[subTaskIdx].subStatus = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStatus`).value;
+    tasks[taskIdx].subTasks[subTaskIdx]._isEditing = false;
+    renderTasks();
+  }
+
+  //previous code start
+
+  // tasks[taskIdx].subTasks[subTaskIdx].subTaskName = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subTaskName`).value
+  // tasks[taskIdx].subTasks[subTaskIdx].subStartDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStartDate`).value
+  // tasks[taskIdx].subTasks[subTaskIdx].subEndDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subEndDate`).value
+  // tasks[taskIdx].subTasks[subTaskIdx].subStatus = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStatus`).value
+  // tasks[taskIdx].subTasks[subTaskIdx]._isEditing = false
+
+  // renderTasks()
+
+  //previous code ends here
 }
 
 
@@ -345,6 +425,7 @@ function onChangeSubTaskDate(taskIdx, subTaskIdx) {
   }
   errorElement.innerText = ''
 }
+
 
 
 
