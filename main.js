@@ -65,7 +65,7 @@ function generateTaskHtml(idx) {
     return `<div class="taskForm">
     <form>
     <label for="task.${idx}.taskId">ID</label>
-    <input id="task.${idx}.taskId" type="number" value="${task.taskId}" onchange="onChangeTaskId(${idx})" required/>
+    <input id="task.${idx}.taskId" type="number" value="${task.taskId}" oninput="onChangeTaskId(${idx})" required/>
     <p style="color:red;" id="task.${idx}.taskId.error"></p>
     </br>
 
@@ -224,7 +224,8 @@ function onChangeTaskId(taskIdx) {
   const taskIdValue = document.getElementById(`task.${taskIdx}.taskId`).value
   const errorElement = document.getElementById(`task.${taskIdx}.taskId.error`)
   if (!errorElement) return
-  if (tasks.find(t => t.taskId === taskIdValue)){
+  const idx = tasks.findIndex(t => t.taskId === taskIdValue)
+  if (idx >= 0 && idx !== taskIdx){
     errorElement.innerHTML = "Task with id " + taskIdValue + " already exists."
   } else {
     errorElement.innerHTML = ''
