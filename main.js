@@ -230,13 +230,17 @@ function generateSubTaskHtml(taskIdx, subTaskIdx) {
 // func to get status class name
 function getStatusStyle(status) {
   if (status === 'InProgress') {
-    return "color: yellow;"
+    // #3498db or #2980b9.
+    return "color: #3498db;"
   } else if (status === 'Completed') {
-    return "color: green;"
+    //#2ecc71 or #27ae60
+    return "color: #2ecc71;"
   } else if (status === 'Due Passed') {
-    return "color: red;"
+    //#e74c3c or #c0392b
+    return "color: #e74c3c;"
   } else if (status === 'Cancelled') {
-    return "color: gray;"
+    //#95a5a6 or #bdc3c7
+    return "color: #95a5a6;"
   }
   return "color: red;"
 }
