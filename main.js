@@ -141,34 +141,34 @@ function generateTaskHtml(idx) {
     return `<div class="taskForm">
     <form>
     <label for="task.${idx}.taskId">ID</label>
-    <input id="task.${idx}.taskId" type="number" value="${task.taskId}" oninput="onChangeTaskId(${idx})" required/>
+    <input id="task.${idx}.taskId" type="number" value="${task.taskId}" oninput="validateTask(${idx})" required/>
     <p style="color:red;" id="task.${idx}.taskId.error"></p>
     </br>
 
     <label for="task.${idx}.taskName">Name</label>
-    <input id="task.${idx}.taskName" type="text" value="${task.taskName}" onchange="onChangeTaskName(${idx})" required/>
+    <input id="task.${idx}.taskName" type="text" value="${task.taskName}" oninput="validateTask(${idx})" required/>
     <p style="color:red;" id="task.${idx}.taskName.error"></p>
     </br>
 
     <label for="task.${idx}.taskStartDate">Start</label>
-    <input id="task.${idx}.taskStartDate"type="datetime-local" value="${task.taskStartDate}" onchange="onChangeTaskDate(${idx})" required/>
+    <input id="task.${idx}.taskStartDate"type="datetime-local" value="${task.taskStartDate}" onchange="validateTask(${idx})" required/>
     <p style="color:red;" id="task.${idx}.taskStartDate.error"></p>
     </br>
 
     <label for="task.${idx}.taskEndDate">End</label>
-    <input id="task.${idx}.taskEndDate" type="datetime-local" value="${task.taskEndDate}" onchange="onChangeTaskDate(${idx})" required/>
+    <input id="task.${idx}.taskEndDate" type="datetime-local" value="${task.taskEndDate}" onchange="validateTask(${idx})" required/>
     <p style="color:red;" id="task.${idx}.taskEndDate.error"></p>
     </br>
 
     <label for="task.${idx}.taskStatus">Status:</label>
       <select id="task.${idx}.taskStatus" required>
-        <option value="InProgress">InProgress</option>
-        <option value="Completed">Completed</option>
-        <option value="DuePassed">Due Passed</option>
-        <option value="Cancelled">Cancelled</option>
-      </select>
+      <option value="InProgress">InProgress</option>
+      <option value="Completed">Completed</option>
+      <option value="DuePassed">Due Passed</option>
+      <option value="Cancelled">Cancelled</option>
+    </select>
 
-    <button onClick="saveTask(${idx})" class="taskBtn taskSaveBtn" type="submit">Save Task</button>
+    <button id="task.${idx}.saveBtn" onClick="saveTask(${idx})" class="taskBtn taskSaveBtn" type="submit">Save Task</button>
     <button onClick="deleteTask(${idx})" class="taskBtn taskDeleteBtn">Delete</button>
     <ul class="sub-task-list">
       ${task.subTasks.map((_, subTaskIdx) => generateSubTaskHtml(idx, subTaskIdx))}
@@ -366,36 +366,46 @@ function saveSubTask(taskIdx, subTaskIdx) {
   //previous code ends here
 }
 
-
-//function to validate id
-function onChangeTaskId(taskIdx) {
+// func to validate task values
+function validateTask(taskIdx) {
   const taskIdValue = document.getElementById(`task.${taskIdx}.taskId`).value
-  const errorElement = document.getElementById(`task.${taskIdx}.taskId.error`)
-  if (!errorElement) return
-  const idx = tasks.findIndex(t => t.taskId === taskIdValue)
-  if (idx >= 0 && idx !== taskIdx){
-    errorElement.innerHTML = "Task with id " + taskIdValue + " already exists."
-  } else {
-    errorElement.innerHTML = ''
-  }
-}
-
-
-// func to handle date change
-function onChangeTaskDate(taskIdx) {
+  const taskNameValue = document.getElementById(`task.${taskIdx}.taskName`).value;
   const startDate = document.getElementById(`task.${taskIdx}.taskStartDate`).value
   const endDate = document.getElementById(`task.${taskIdx}.taskEndDate`).value
-  const errorElement = document.getElementById(`task.${taskIdx}.taskEndDate.error`)
-  if (!errorElement) return
-  if(!startDate|| !endDate) {
-    errorElement.innerText = 'Please select valid dates'
-    return
-  }
-  if (startDate > endDate) {
-    errorElement.innerText = 'End date can\'t be smaller than start date.'
+
+  const taskIdErrEl = document.getElementById(`task.${taskIdx}.taskId.error`)
+  const taskEndDateErrEl = document.getElementById(`task.${taskIdx}.taskEndDate.error`)
+  const taskBtnEl = document.getElementById(`task.${taskIdx}.saveBtn`)
+
+  let hasErrors = false;
+  
+  // task id validation
+  const idx = tasks.findIndex(t => t.taskId === taskIdValue)
+  if (idx >= 0 && idx !== taskIdx) {
+    taskIdErrEl.innerHTML = "Task with id " + taskIdValue + " already exists."
+    hasErrors = true
   } else {
-    errorElement.innerText = ''
+    taskIdErrEl.innerHTML = ''
   }
+
+  // task name validation
+  if (!taskNameValue || taskNameValue.length < 1) {
+    hasErrors = true
+  }
+
+  // task dates validation
+  if (!startDate || !endDate) {
+    // taskEndDateErrEl.innerText = 'Please select valid dates'
+    hasErrors = true
+  }
+  else if (startDate > endDate) {
+    taskEndDateErrEl.innerText = 'End date can\'t be smaller than start date.'
+    hasErrors = true
+  } else {
+    taskEndDateErrEl.innerText = ''
+  }
+
+  taskBtnEl.disabled = hasErrors
 }
 
 function onChangeSubTaskDate(taskIdx, subTaskIdx) {
