@@ -72,7 +72,11 @@ function renderTasks() {
     taskEl.innerHTML = generateTaskHtml(i)
     taskListEl.appendChild(taskEl)
   }
+
+  initalValidation()
 }
+
+
 
 // func to check if task is in search
 function isTaskInSearch(task) {
@@ -138,7 +142,7 @@ function generateTaskHtml(idx) {
   // statusOptions += '<option value="Canceled">Canceled</option>';
 
   if (task._isEditing) {
-    return `<div class="taskForm">
+    return `<div class="taskForm" onload="alert('hello')">
     <form>
     <label for="task.${idx}.taskId">ID</label>
     <input id="task.${idx}.taskId" type="number" value="${task.taskId}" oninput="validateTask(${idx})" required/>
@@ -447,32 +451,19 @@ function validateSubTask(taskIdx, subTaskIdx) {
   subTaskBtn.disabled = hasErrors
 }
 
-function onChangeSubTaskDate(taskIdx, subTaskIdx) {
-  const taskStartDate = tasks[taskIdx].taskStartDate
-  const taskEndDate = tasks[taskIdx].taskEndDate
-  const subTaskStartDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStartDate`).value
-  const subTaskEndDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subEndDate`).value
-  const errorElement = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subEndDate.error`)
-  if(!errorElement) {
-    return
+function initalValidation() {
+  for(let i = 0; i<tasks.length; i++) {
+    const el = document.getElementById(`task.${i}.saveBtn`)
+    if(el) {
+      validateTask(i)
+    }
+    for(let j=0; j<tasks[i].subTasks.length; j++) {
+      const el = document.getElementById(`task.${i}.subtask.${j}.saveBtn`)
+      if (el) {
+        validateSubTask(i, j)
+      }
+    }
   }
-  if (!subTaskStartDate || !subTaskEndDate) {
-    errorElement.innerText = 'Please select valid dates'
-    return
-  }
-  if (subTaskStartDate > subTaskEndDate) {
-    errorElement.innerText = 'End date can\'t be smaller than start date.'
-    return
-  }
-  if (subTaskStartDate <= taskStartDate || subTaskStartDate >= taskEndDate) {
-    errorElement.innerText = 'Start Date should be between parent task start and end date.'
-    return
-  }
-  if (subTaskEndDate <= taskStartDate || subTaskEndDate >= taskEndDate) {
-    errorElement.innerText = 'End Date should be between parent task start and end date.'
-    return
-  }
-  errorElement.innerText = ''
 }
 
 
