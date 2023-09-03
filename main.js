@@ -33,38 +33,14 @@ const tasks = [
   // }
 ]
 
-const deletedTasks = [];
-const editTasks = [];
-
-// func to add new task
-function addNewTask() {
-  search = ''
-  tasks.push({
-    taskId: '',
-    taskName: '',
-    taskStartDate: '',
-    taskEndDate: '',
-    taskStatus: '',
-    subTasks: [],
-    _isEditing: true,
-  })
-  renderTasks();
-}
-
-//function to delete parent task
-function deleteTask(taskIdx){
-  deletedTasks.push(tasks[taskIdx])
-  // console.log('deleted tasks ',deletedTasks);
-  tasks.splice(taskIdx,1);
-  renderTasks();
-
-}
-
 // func to render tasks
 function renderTasks() {
   // empty everything
   taskListEl.innerHTML = ''
   for (let i = 0; i < tasks.length; i++) {
+    if (tasks[i]._isDeleted === true) {
+      continue;
+    }
     if (isTaskInSearch(tasks[i]) === false) {
       continue;
     }
@@ -188,7 +164,7 @@ function generateTaskHtml(idx) {
     <h3>Task Status: <span style="${getStatusStyle(task.taskStatus)}">${task.taskStatus}</span></h3>
 
     <ul class="sub-task-list">
-      ${task.subTasks.map((_, subTaskIdx) => generateSubTaskHtml(idx, subTaskIdx) )}
+      ${task.subTasks.map((_, subTaskIdx) => generateSubTaskHtml(idx, subTaskIdx))}
     </ul>
     <button onClick="addSubTask(${idx})" class="taskBtn taskSaveBtn">Add Sub Task</button>
     <button onClick="editTask(${idx})" class="taskBtn taskEditBtn">Edit</button>
@@ -199,6 +175,9 @@ function generateTaskHtml(idx) {
 
 function generateSubTaskHtml(taskIdx, subTaskIdx) {
   const subTask = tasks[taskIdx].subTasks[subTaskIdx]
+  if (subTask._isDeleted) {
+    return ''
+  }
   if (subTask._isEditing) {
     return `
     <li>
@@ -262,6 +241,28 @@ function getStatusStyle(status) {
   return "color: red;"
 }
 
+// func to add new task
+function addNewTask() {
+  search = ''
+  tasks.push({
+    taskId: '',
+    taskName: '',
+    taskStartDate: '',
+    taskEndDate: '',
+    taskStatus: '',
+    subTasks: [],
+    _isEditing: true,
+    _isDeleted: false,
+  })
+  renderTasks();
+}
+
+//function to delete parent task
+function deleteTask(taskIdx) {
+  tasks[taskIdx]._isDeleted = true
+  renderTasks();
+}
+
 // func to set it editing
 function editTask(idx) {
   tasks[idx]._isEditing = true
@@ -294,20 +295,6 @@ function saveTask(idx) {
     tasks[idx]._isEditing = false;
     renderTasks();
   }
-  //new code ends here
-
-
-  //previous code starts here
-
-  // tasks[idx].taskId = document.getElementById(`task.${idx}.taskId`).value
-  // tasks[idx].taskName = document.getElementById(`task.${idx}.taskName`).value
-  // tasks[idx].taskStartDate = document.getElementById(`task.${idx}.taskStartDate`).value
-  // tasks[idx].taskEndDate = document.getElementById(`task.${idx}.taskEndDate`).value
-  // tasks[idx].taskStatus = document.getElementById(`task.${idx}.taskStatus`).value
-  // tasks[idx]._isEditing = false
-  // renderTasks()
-
-  //previous code ends here
 }
 
 
@@ -317,13 +304,15 @@ function addSubTask(idx) {
     subId: `${tasks[idx].taskId}.${tasks[idx].subTasks.length + 1}`,
     subTaskName: '',
     _isEditing: true,
+    _isDeleted: false,
   })
   renderTasks()
 }
 
 //func to delete subtask
 function deleteSubTask(taskIdx, subTaskIdx) {
-  tasks[taskIdx].subTasks.splice(subTaskIdx, 1);
+  tasks[taskIdx].subTasks[subTaskIdx]._isDeleted = true
+  console.log(tasks)
   renderTasks()
 }
 
