@@ -200,15 +200,15 @@ function generateSubTaskHtml(taskIdx, subTaskIdx) {
     <li>
       <div>
         <label for="task.${taskIdx}.subtask.${subTaskIdx}.subTaskName">Name</label>
-        <input id="task.${taskIdx}.subtask.${subTaskIdx}.subTaskName" value="${subTask.subTaskName}"/>
+        <input id="task.${taskIdx}.subtask.${subTaskIdx}.subTaskName" value="${subTask.subTaskName}" oninput="validateSubTask(${taskIdx}, ${subTaskIdx})"/>
       </br>
 
       <label for="task.${taskIdx}.subtask.${subTaskIdx}.subStartDate">Start</label>
-        <input id="task.${taskIdx}.subtask.${subTaskIdx}.subStartDate" type="datetime-local" value="${subTask.subStartDate}" onChange="onChangeSubTaskDate(${taskIdx}, ${subTaskIdx})"/>
+        <input id="task.${taskIdx}.subtask.${subTaskIdx}.subStartDate" type="datetime-local" value="${subTask.subStartDate}" onChange="validateSubTask(${taskIdx}, ${subTaskIdx})"/>
       </br>
 
       <label for="task.${taskIdx}.subtask.${subTaskIdx}.subEndDate">End</label>
-        <input id="task.${taskIdx}.subtask.${subTaskIdx}.subEndDate" type="datetime-local" value="${subTask.subEndDate}" onChange="onChangeSubTaskDate(${taskIdx}, ${subTaskIdx})"/>
+        <input id="task.${taskIdx}.subtask.${subTaskIdx}.subEndDate" type="datetime-local" value="${subTask.subEndDate}" onChange="validateSubTask(${taskIdx}, ${subTaskIdx})"/>
         <p style="color:red;" id="task.${taskIdx}.subtask.${subTaskIdx}.subEndDate.error"></p>
         </br>
 
@@ -222,8 +222,8 @@ function generateSubTaskHtml(taskIdx, subTaskIdx) {
         <option value="Cancelled">Cancelled</option>
       </select>
 
-      <button onClick="saveSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskSaveBtn">Save Sub Task</button>
-              <button onClick="deleteSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskDeleteBtn">Delete Sub Task</button>
+      <button id="task.${taskIdx}.subtask.${subTaskIdx}.saveBtn" onClick="saveSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskSaveBtn">Save Sub Task</button>
+      <button onClick="deleteSubTask(${taskIdx}, ${subTaskIdx})" class="taskBtn taskDeleteBtn">Delete Sub Task</button>
       </div>
     </li>
     `
@@ -406,6 +406,45 @@ function validateTask(taskIdx) {
   }
 
   taskBtnEl.disabled = hasErrors
+}
+
+// func to validate sub task values
+function validateSubTask(taskIdx, subTaskIdx) {
+  const taskStartDate = tasks[taskIdx].taskStartDate
+  const taskEndDate = tasks[taskIdx].taskEndDate
+  const subTaskName = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subTaskName`).value
+  const subTaskStartDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subStartDate`).value
+  const subTaskEndDate = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subEndDate`).value
+
+  const subTaskEndDateErrEl = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.subEndDate.error`)
+  const subTaskBtn = document.getElementById(`task.${taskIdx}.subtask.${subTaskIdx}.saveBtn`)
+
+  let hasErrors = false
+
+  if (!subTaskName || subTaskName.length === 0) {
+    hasErrors = true
+  }
+
+  if (!subTaskStartDate || !subTaskEndDate) {
+    hasErrors = true
+  }
+  else if (subTaskStartDate > subTaskEndDate) {
+    subTaskEndDateErrEl.innerText = 'End date can\'t be smaller than start date.'
+    hasErrors = true
+  }
+  else if (subTaskStartDate <= taskStartDate || subTaskStartDate >= taskEndDate) {
+    subTaskEndDateErrEl.innerText = 'Start Date should be between parent task start and end date.'
+    hasErrors = true
+  }
+  else if (subTaskEndDate <= taskStartDate || subTaskEndDate >= taskEndDate) {
+    subTaskEndDateErrEl.innerText = 'End Date should be between parent task start and end date.'
+    hasErrors = true
+  }
+  else {
+    subTaskEndDateErrEl.innerText = ''
+  }
+
+  subTaskBtn.disabled = hasErrors
 }
 
 function onChangeSubTaskDate(taskIdx, subTaskIdx) {
